@@ -59,7 +59,7 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly(['text'])
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0
-          && request.resource.data.text.size() <= 600;
+          && request.resource.data.text.size() <= 2000;
         allow get: if owner(uid) && unlocked();
         allow delete: if owner(uid);
       }
