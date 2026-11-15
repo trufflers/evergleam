@@ -4,8 +4,9 @@ service cloud.firestore {
 
     // Unlock moment: Dec 25 2026, 00:00 Vancouver time (08:00 UTC).
     // Keep in sync with UNLOCK_AT in firebase-config.js.
+    // Unlock moment: Dec 25 2026, 00:00 China time.
     function unlocked() {
-      return request.time >= timestamp.date(2026, 12, 25) + duration.value(8, 'h');
+      return request.time >= timestamp.date(2026, 12, 24) + duration.value(16, 'h');
     }
     function owner(uid) {
       return request.auth != null && request.auth.uid == uid;
