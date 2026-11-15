@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Unlock moment: Dec 25 2026, 00:00 Vancouver time (08:00 UTC).
+    // Keep in sync with UNLOCK_AT in firebase-config.js.
+    function unlocked() {
+      return request.time >= timestamp.date(2026, 12, 25) + duration.value(8, 'h');
+    }
+    function owner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /trees/{uid} {
+      allow read: if true;
+      allow create, update: if owner(uid)
+        && request.resource.data.keys().hasOnly(['name', 'at'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 30
+        && request.resource.data.at == request.time;
+
+      // Public part of an ornament: who it's from and what it looks like.
+      match /ornaments/{oid} {
+        allow read: if true;
+        allow create: if exists(/databases/$(database)/documents/trees/$(uid))
+          && existsAfter(/databases/$(database)/documents/trees/$(uid)/messages/$(oid))
+          && request.resource.data.keys().hasOnly(['from', 'shape', 'hue', 'h', 'a', 'at'])
+          && request.resource.data.from is string
+          && request.resource.data.from.size() > 0
+          && request.resource.data.from.size() <= 24
+          && request.resource.data.shape is int
+          && request.resource.data.shape >= 0 && request.resource.data.shape <= 5
+          && request.resource.data.hue is int
+          && request.resource.data.hue >= 0 && request.resource.data.hue <= 5
+          && request.resource.data.h is number
+          && request.resource.data.h >= 0 && request.resource.data.h <= 1
+          && request.resource.data.a is number
+          && request.resource.data.at == request.time;
+        allow delete: if owner(uid);
+      }
+
+      // The sealed message. Anyone can write one; only the tree's owner can
+      // read it, and only once the unlock moment has passed.
+      match /messages/{oid} {
+        allow create: if existsAfter(/databases/$(database)/documents/trees/$(uid)/ornaments/$(oid))
+          && request.resource.data.keys().hasOnly(['text'])
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 600;
+        allow get: if owner(uid) && unlocked();
+        allow delete: if owner(uid);
+      }
+    }
+  }
+}

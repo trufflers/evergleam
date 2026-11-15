@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Evergleam — a tree your friends light up</title>
+<meta name="description" content="Plant a tree of light, share the link, and let friends hang sealed messages that open on Christmas morning.">
+<meta name="theme-color" content="#060a1c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23060a1c'/%3E%3Cpath d='M16 4l2.6 9.4L28 16l-9.4 2.6L16 28l-2.6-9.4L4 16l9.4-2.6z' fill='%23ffc857'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="sky" aria-label="A slowly turning tree made of light, hung with ornaments"></canvas>
+
+<header class="top">
+  <a class="mark" href="./">Evergleam</a>
+  <button id="authBtn" class="ghost small" hidden></button>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow" id="eyebrow"></p>
+    <h1 id="title"></h1>
+    <p class="meta" id="meta"></p>
+  </section>
+
+  <section class="dock">
+    <div id="chips" class="chips" aria-label="Ornaments on this tree"></div>
+    <div class="actions">
+      <button id="primary" class="btn" hidden></button>
+      <button id="secondary" class="ghost" hidden></button>
+    </div>
+    <p id="demoNote" class="note" hidden>Preview mode: nothing is shared yet. Ornaments are saved only in this browser until Firebase is connected.</p>
+  </section>
+</main>
+
+<dialog id="hangDlg">
+  <form method="dialog" id="hangForm">
+    <h2>Hang an ornament</h2>
+    <p class="sub" id="hangSub"></p>
+    <fieldset>
+      <legend>Shape</legend>
+      <div class="picker" id="shapePick"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Glow</legend>
+      <div class="picker" id="huePick"></div>
+    </fieldset>
+    <label>Your name
+      <input id="fromIn" maxlength="24" required autocomplete="nickname" placeholder="So they know who it's from">
+    </label>
+    <label>Your message
+      <textarea id="textIn" maxlength="500" required rows="4" placeholder="Sealed until Christmas morning"></textarea>
+    </label>
+    <div class="row">
+      <button type="button" class="ghost" data-close>Cancel</button>
+      <button type="submit" class="btn" id="hangGo">Hang it</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="viewDlg">
+  <div class="view">
+    <canvas id="viewOrn" width="240" height="240"></canvas>
+    <p class="eyebrow" id="viewFrom"></p>
+    <p class="message" id="viewText"></p>
+    <div class="row">
+      <button type="button" class="ghost danger" id="viewRemove" hidden>Remove</button>
+      <button type="button" class="btn" data-close>Close</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="nameDlg">
+  <form method="dialog" id="nameForm">
+    <h2>Name your tree</h2>
+    <p class="sub">This is what your friends will see at the top.</p>
+    <label>Your name
+      <input id="nameIn" maxlength="30" required autocomplete="given-name">
+    </label>
+    <div class="row">
+      <button type="button" class="ghost" data-close>Cancel</button>
+      <button type="submit" class="btn">Plant it</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
