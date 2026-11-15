@@ -8,6 +8,16 @@ service cloud.firestore {
     function unlocked() {
       return request.time >= timestamp.date(2026, 12, 24) + duration.value(16, 'h');
     }
+    // The tree's saved look: background, tree colour, lights, topper, decorations.
+    function validLook(l) {
+      return l is map
+        && l.keys().hasOnly(['scene', 'tree', 'lights', 'topper', 'extras'])
+        && l.scene is int && l.scene >= 0 && l.scene < 20
+        && l.tree is int && l.tree >= 0 && l.tree < 20
+        && l.lights is int && l.lights >= 0 && l.lights < 20
+        && l.topper is int && l.topper >= 0 && l.topper < 20
+        && l.extras is list && l.extras.size() <= 12;
+    }
     function owner(uid) {
       return request.auth != null && request.auth.uid == uid;
     }
@@ -15,7 +25,8 @@ service cloud.firestore {
     match /trees/{uid} {
       allow read: if true;
       allow create, update: if owner(uid)
-        && request.resource.data.keys().hasOnly(['name', 'at'])
+        && request.resource.data.keys().hasOnly(['name', 'look', 'at'])
+        && (!('look' in request.resource.data) || validLook(request.resource.data.look))
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 30
@@ -31,7 +42,7 @@ service cloud.firestore {
           && request.resource.data.from.size() > 0
           && request.resource.data.from.size() <= 24
           && request.resource.data.shape is int
-          && request.resource.data.shape >= 0 && request.resource.data.shape <= 5
+          && request.resource.data.shape >= 0 && request.resource.data.shape <= 9
           && request.resource.data.hue is int
           && request.resource.data.hue >= 0 && request.resource.data.hue <= 5
           && request.resource.data.h is number

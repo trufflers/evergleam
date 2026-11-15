@@ -1,6 +1,6 @@
 # Evergleam
 
-A tree made of light. Share your link, friends hang ornaments with sealed messages, and you open them on Christmas morning.
+A cozy, hand-painted-looking Christmas tree. Pick your background, tree colour, lights and decorations, share your link, friends hang ornaments with sealed messages, and you open them on Christmas morning.
 
 Plain static files, so it runs on GitHub Pages. Messages live in Firebase (free tier), which is also what keeps them locked: the rules in `firestore.rules` refuse to hand a message to anyone but the tree's owner, and not before the unlock time.
 
@@ -24,6 +24,8 @@ Edit `UNLOCK_AT` in `firebase-config.js` **and** the `unlocked()` line in `fires
 
 ## How it works
 
+- Each page of the tree holds 20 ornaments. Once a page fills, new ornaments start a fresh page, and arrows (or the ← → keys) flip between them.
+
 - Only the tree owner signs in (Google). Friends just type a name and a message.
-- `trees/{uid}`: the tree's name. `ornaments/`: who it's from and what it looks like (public). `messages/`: the text (owner only, after unlock).
+- `trees/{uid}`: the tree's name and its look (background, colours, decorations). `ornaments/`: who it's from and what it looks like (public). `messages/`: the text (owner only, after unlock).
 - Anyone who visits can plant their own tree too.
